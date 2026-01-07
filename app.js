@@ -22,6 +22,4 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-const deckRepo = require('./repositories/decks.repository');
 
-console.log(deckRepo.findAll());
