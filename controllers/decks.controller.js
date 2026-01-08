@@ -1,38 +1,53 @@
 const deckService = require('../services/decks.service');
 
 class DeckController {
-  getAll(req, res) {
-    const { archetype, source } = req.query;
-    const decks = deckService.getAllDecks({ archetype, source });
+  getAll(req, res, next) {
+    try {
+      const { archetype, source } = req.query;
+      const decks = deckService.getAllDecks({ archetype, source });
 
-    res.json({
-      data: decks,
-      total: decks.length
-    });
+      res.json({
+        success: true,
+        data: decks,
+        total: decks.length
+      });
+    } catch (err) {
+      next(err);
+    }
   }
 
-  getById(req, res) {
-    const deck = deckService.getDeckById(req.params.id);
+  getById(req, res, next) {
+    try {
+      const deck = deckService.getDeckById(req.params.id);
 
-    if (!deck) {
-      return res.status(404).json({ message: 'Deck not found' });
+      if (!deck) {
+        const error = new Error('Deck not found');
+        error.statusCode = 404;
+        throw error;
+      }
+
+      res.json({
+        success: true,
+        data: deck
+      });
+    } catch (err) {
+      next(err);
     }
-
-    res.json(deck);
   }
 
-  route(req, res) {
-    const { mode } = req.query;
-    const deck = deckService.routeDeck(mode);
+  route(req, res, next) {
+    try {
+      const { mode } = req.query;
+      const deck = deckService.routeDeck(mode);
 
-    if (!deck) {
-      return res.status(404).json({ message: 'No deck available' });
+      res.json({
+        success: true,
+        mode: mode || 'random',
+        data: deck
+      });
+    } catch (err) {
+      next(err);
     }
-
-    res.json({
-      mode: mode || 'random',
-      recommendedDeck: deck
-    });
   }
 }
 

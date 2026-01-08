@@ -26,3 +26,6 @@ const deckRoutes = require('./routes/decks.routes');
 
 app.use('/api/v1/decks', deckRoutes);
 
+const errorHandler = require('./middlewares/error.middleware');
+
+app.use(errorHandler);
