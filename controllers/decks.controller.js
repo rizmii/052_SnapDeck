@@ -15,12 +15,24 @@ class DeckController {
     const deck = deckService.getDeckById(req.params.id);
 
     if (!deck) {
-      return res.status(404).json({
-        message: 'Deck not found'
-      });
+      return res.status(404).json({ message: 'Deck not found' });
     }
 
     res.json(deck);
+  }
+
+  route(req, res) {
+    const { mode } = req.query;
+    const deck = deckService.routeDeck(mode);
+
+    if (!deck) {
+      return res.status(404).json({ message: 'No deck available' });
+    }
+
+    res.json({
+      mode: mode || 'random',
+      recommendedDeck: deck
+    });
   }
 }
 
