@@ -22,4 +22,7 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
+const deckRoutes = require('./routes/decks.routes');
+
+app.use('/api/v1/decks', deckRoutes);
 
