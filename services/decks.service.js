@@ -1,57 +1,38 @@
-const deckRepository = require('../repositories/decks.repository');
-
 class DeckService {
-  getAllDecks(filter = {}) {
-    let decks = deckRepository.findAll();
+  async getAllDecks(filter = {}) {
+    let decks = await deckRepository.findAll();
 
     if (filter.archetype) {
-      decks = decks.filter(
-        d => d.archetype.toLowerCase() === filter.archetype.toLowerCase()
+      decks = decks.filter(d =>
+        d.archetype.toLowerCase() === filter.archetype.toLowerCase()
       );
     }
 
     if (filter.source) {
-      decks = decks.filter(
-        d => d.source.toLowerCase() === filter.source.toLowerCase()
+      decks = decks.filter(d =>
+        d.source.toLowerCase() === filter.source.toLowerCase()
       );
     }
 
     return decks;
   }
 
-  getDeckById(id) {
-    return deckRepository.findById(id);
+  async getDeckById(id) {
+    return await deckRepository.findById(id);
   }
 
-  routeDeck(mode = 'random') {
-  const decks = deckRepository.findAll();
-  if (decks.length === 0) {
-    const error = new Error('No decks available');
-    error.statusCode = 404;
-    throw error;
-  }
+  async routeDeck(mode = 'random') {
+    const decks = await deckRepository.findAll();
+    if (decks.length === 0) throw new Error('No decks available');
 
-  const allowedModes = ['ladder', 'budget', 'random'];
-  if (mode && !allowedModes.includes(mode)) {
-    const error = new Error('Invalid routing mode');
-    error.statusCode = 400;
-    throw error;
-  }
+    if (mode === 'ladder') {
+      return decks.reduce((best, d) => d.winRate > best.winRate ? d : best);
+    }
 
-  switch (mode) {
-    case 'ladder':
-      return decks.reduce((best, deck) =>
-        deck.winRate > best.winRate ? deck : best
-      );
-    case 'budget':
-      return decks.reduce((best, deck) =>
-        deck.cards.length < best.cards.length ? deck : best
-      );
-    default:
-      return decks[Math.floor(Math.random() * decks.length)];
+    if (mode === 'budget') {
+      return decks.reduce((best, d) => d.cards.length < best.cards.length ? d : best);
+    }
+
+    return decks[Math.floor(Math.random() * decks.length)];
   }
 }
-
-}
-
-module.exports = new DeckService();

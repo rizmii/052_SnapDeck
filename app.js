@@ -17,6 +17,12 @@ app.get('/api/v1/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+const sequelize = require('./config/database');
+
+sequelize.sync()
+  .then(() => console.log('Database connected'))
+  .catch(err => console.error('DB error:', err));
+
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
