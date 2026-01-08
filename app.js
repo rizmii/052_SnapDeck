@@ -26,6 +26,12 @@ const deckRoutes = require('./routes/decks.routes');
 
 app.use('/api/v1/decks', deckRoutes);
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./docs/swagger');
+
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+
 const errorHandler = require('./middlewares/error.middleware');
 
 app.use(errorHandler);
